@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="style.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>twitch-website</title>
+    </head>
+    <body>
+        <div class="input-container">
+            <input id="input-stream" spellcheck="false" autocomplete="off"/>
+            <button id="connect-button">CONFIRM</button>
+        </div>
+        <div class="game-container">
+            <canvas id="game-canvas"></canvas>
+        </div>
+        <script type="module" src="/src/twitch.ts"></script>
+        <script type="module" src="/src/games/game.ts"></script>
+    </body>
+</html>
