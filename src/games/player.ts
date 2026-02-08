@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
 export class Player {
-    private terminalVelocity : number = 0.25;
-    private acceleration : number = 0.01;
+    private terminalVelocity : number = 0.5;
+    private acceleration : number = 0.02;
     private friction : number = 0.025;
 
     private model : THREE.Group = new THREE.Group();
@@ -48,11 +48,11 @@ export class Player {
             this.velocity.add(moveDirection.multiplyScalar(this.acceleration * dt));
         }
 
-        this.velocity.multiplyScalar(1 - (this.friction * dt));
+        this.velocity.multiplyScalar(1 - (this.friction / (dt <= 0 ? 1 : dt)));
 
         this.velocity.clamp(
-            new THREE.Vector3(-this.terminalVelocity, 0, -this.terminalVelocity),
-            new THREE.Vector3(this.terminalVelocity, 0, this.terminalVelocity)
+            new THREE.Vector3(-this.terminalVelocity * dt, 0, -this.terminalVelocity * dt),
+            new THREE.Vector3(this.terminalVelocity * dt, 0, this.terminalVelocity * dt)
         );
 
         const quaternion : THREE.Quaternion = new THREE.Quaternion();
