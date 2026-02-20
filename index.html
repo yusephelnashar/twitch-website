@@ -16,5 +16,65 @@
         </div>
         <script type="module" src="/src/twitch.ts"></script>
         <script type="module" src="/src/games/game.ts"></script>
+
+        <script id="platformVShader" type="x-shader/x-vertex">
+            precision mediump float;
+
+            uniform vec2 resolution;
+            uniform float time;
+
+            varying vec3 vWorldPosition;
+            varying float nPyRatio;
+
+            struct wave {
+                vec2 waveDirection;
+                float waveSpeed;
+                float waveFreq;
+                float waveAmp;
+            };
+
+            void main() {
+                vec3 newPosition = position;
+
+                vec4 worldSpace = modelMatrix * vec4(position, 1.0);
+                vWorldPosition = worldSpace.xyz;
+
+                // Position attribute comes as local space from THREE js. Model turns them to world space
+                // View matrix applies camera perspective and projection turns into clip space
+
+                wave wave1 = wave(
+                    vec2(1.0, 0.5), 
+                    6.0, 
+                    30.0, 
+                    2.0
+                );
+
+                float waveCalc = sin(dot(wave1.waveDirection, newPosition.xz) * wave1.waveFreq + time * wave1.waveSpeed);
+                newPosition.y += waveCalc * wave1.waveAmp;
+                nPyRatio = newPosition.y / wave1.waveAmp;
+
+                gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(newPosition, 1.0);
+            }
+        </script>
+        <script id="platformFShader" type="x-shader/x-fragment">
+            precision mediump float;
+
+            uniform vec2 resolution;
+            uniform float time;
+            uniform vec3 playerPosition;
+
+            varying vec3 vWorldPosition;
+            varying float nPyRatio;
+
+            void main() {
+                float dist = distance(vWorldPosition, playerPosition);
+
+                gl_FragColor = vec4(0.0, 0.0, clamp(1.0 * nPyRatio, 0.9, 1.0), 1.0);
+
+                if (dist <= 7.5) {
+                    gl_FragColor = vec4(clamp(1.0 * nPyRatio, 0.25, 1.0), 0.75, 1.0, 1.0);
+                }
+            }
+        </script>
     </body>
 </html>

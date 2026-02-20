@@ -1,6 +1,9 @@
 import * as THREE from "three";
 
 export class Player {
+    private static borderMin : THREE.Vector3 = new THREE.Vector3(-50, 4, -80);
+    private static borderMax : THREE.Vector3 = new THREE.Vector3(50, 4, -10);
+
     private terminalVelocity : number = 0.5;
     private acceleration : number = 0.02;
     private friction : number = 0.025;
@@ -63,6 +66,20 @@ export class Player {
         
         this.model.quaternion.premultiply(quaternion);
         this.model.position.add(this.velocity);
+        this.borderCollision();
+    }
+
+    private borderCollision() : void {
+        this.model.position.clamp(Player.borderMin, Player.borderMax);
+        const modelPos : THREE.Vector3 = this.model.position.clone();
+
+        if (modelPos.z === Player.borderMin.z || modelPos.z === Player.borderMax.z) {
+            this.velocity.setZ(0);
+        }
+
+        if (modelPos.x === Player.borderMax.x || modelPos.x === Player.borderMax.x) {
+            this.velocity.setX(0);
+        }
     }
 
     public getModel() : THREE.Group {

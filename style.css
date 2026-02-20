@@ -24,8 +24,8 @@
 }
 
 #game-canvas {
-    width: 75vw;
-    height: 75vh;
+    width: 750px;
+    height: 500px;
     border: 5px solid hsl(300, 90%, 10%);
     border-radius: 15px;
 }
