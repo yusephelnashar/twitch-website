@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Player } from "./player.ts";
 
 export class Platform {
     private model : THREE.Group = new THREE.Group();
@@ -12,7 +13,9 @@ export class Platform {
             uniforms: {
                 time: {value: 0.0},
                 playerPosition: {value: new THREE.Vector3(0.0, 0.0, 0.0)},
-                resolution: {value: this.canvasSize}
+                resolution: {value: this.canvasSize},
+                borderMin: {value: Player.borderMin},
+                borderMax: {value: Player.borderMax}
             },
 
             vertexShader: this.vertexShaderSrc,

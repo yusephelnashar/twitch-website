@@ -1,14 +1,15 @@
 import * as THREE from "three";
 
 export class Player {
-    private static borderMin : THREE.Vector3 = new THREE.Vector3(-50, 4, -80);
-    private static borderMax : THREE.Vector3 = new THREE.Vector3(50, 4, -10);
+    public static borderMin : THREE.Vector3 = new THREE.Vector3(-50, 4, -80);
+    public static borderMax : THREE.Vector3 = new THREE.Vector3(50, 4, -10);
 
     private terminalVelocity : number = 0.5;
     private acceleration : number = 0.02;
     private friction : number = 0.025;
 
     private model : THREE.Group = new THREE.Group();
+    private boundingBox : THREE.Box3 = new THREE.Box3();
     private velocity : THREE.Vector3 = new THREE.Vector3();
 
     private radius : number;
@@ -17,6 +18,8 @@ export class Player {
         this.radius = radius;
         this.initModel(color, texture);
         this.model.position.set(x, y, z);
+        this.model.updateMatrixWorld();
+        this.boundingBox.setFromObject(this.model);
     }
 
     private initModel(color : number, texture : THREE.Texture<HTMLImageElement>) : void {
@@ -67,6 +70,8 @@ export class Player {
         this.model.quaternion.premultiply(quaternion);
         this.model.position.add(this.velocity);
         this.borderCollision();
+        this.model.updateMatrixWorld();
+        this.boundingBox.setFromObject(this.model);
     }
 
     private borderCollision() : void {
@@ -77,13 +82,17 @@ export class Player {
             this.velocity.setZ(0);
         }
 
-        if (modelPos.x === Player.borderMax.x || modelPos.x === Player.borderMax.x) {
+        if (modelPos.x === Player.borderMin.x || modelPos.x === Player.borderMax.x) {
             this.velocity.setX(0);
         }
     }
 
     public getModel() : THREE.Group {
         return this.model;
+    }
+
+    public getBoundingBox() : THREE.Box3 {
+        return this.boundingBox;
     }
 
     public getAcceleration() : number {

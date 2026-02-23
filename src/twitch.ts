@@ -1,24 +1,42 @@
 import * as tmi from "tmi.js";
+import {Game} from "./games/game";
 
 class Twitch {
     private client : tmi.Client | null = null;
     private inputStream : HTMLInputElement;
+    private inputKeyword : HTMLInputElement;
     private connectButton : HTMLButtonElement;
     private connectButtonDebounce : number = Date.now();
+    private keywordDebounce : number = Date.now();
     private static prevStreamerName : string | null = null;
 
-    constructor() {
+    constructor(game : Game) {
         this.inputStream = document.getElementById("input-stream") as HTMLInputElement;
+        this.inputKeyword = document.getElementById("input-keyword") as HTMLInputElement;
         this.connectButton = document.getElementById("connect-button") as HTMLButtonElement;
 
-        this.initEventListeners();
+        this.initEventListeners(game);
     }
 
     private initEventListeners() : void {
-        this.connectButton.addEventListener("click", () => this.handleConnect());
+        this.connectButton.addEventListener("click", () => this.handleConnect(game));
+        this.inputKeyword.addEventListener("input", () => {
+            this.keywordDebounce = Date.now();
+
+            setTimeout(() => {
+                if ((Date.now() - this.keywordDebounce) >= 1000) {
+                    localStorage.setItem("keyword", this.inputKeyword.value);
+                    
+                    this.inputKeyword.classList.add("keyword-set");
+                    setTimeout(() => {
+                        this.inputKeyword.classList.remove("keyword-set");
+                    }, 1000)
+                }
+            }, 1000)
+        })
     }
 
-    private async handleConnect() : Promise<void> {
+    private async handleConnect(game : Game) : Promise<void> {
         if ((Date.now() - this.connectButtonDebounce) < 300) return;
 
         this.connectButtonDebounce = Date.now();
@@ -51,7 +69,11 @@ class Twitch {
         });
 
         this.client.on("message", (channel: string, tags: tmi.ChatUserstate, message: string, self: boolean) : void => {
-            console.log(`${tags.username} said ${message}`);
+            const regex : RegExp = new RegExp(`(${localStorage.getItem("keyword")})`);
+
+            if (regex.test(message.toLowerCase())) {
+                game.spawnObstacle();
+            }
         });
 
         try {
@@ -64,4 +86,5 @@ class Twitch {
     }
 }
 
-new Twitch();
+const game : Game = new Game();
+new Twitch(game);

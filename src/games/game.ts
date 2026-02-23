@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import * as Player from "./player"
 import * as Platform from "./platform"
+import * as Obstacle from "./obstacle";
 
 const loader : THREE.TextureLoader = new THREE.TextureLoader();
 const playerTextureUrl = new URL("./images/player.png", import.meta.url).href;
 const playerTexture = loader.load(playerTextureUrl);
 
-class Game {
+export class Game {
     private static player : Player.Player = new Player.Player(0, 4, -20, 4, 0xFF65FF, playerTexture);
     private static platform : Platform.Platform = new Platform.Platform(0, 0, 0, 500, 0.5, 500);
     private static keyMap : Map<string, boolean> = new Map();
@@ -21,6 +22,14 @@ class Game {
     private clock : THREE.Clock = new THREE.Clock();
 
     constructor() {
+        Game.canvas.addEventListener("focus", () => {
+            Game.canvas.classList.add("focus-animate");
+
+            setTimeout(() => {
+                Game.canvas.classList.remove("focus-animate");
+            }, 1000)
+        })
+
         this.scene = new THREE.Scene();
         
         this.camera = new THREE.PerspectiveCamera(70, Game.width / Game.height, 0.1, 1000);
@@ -49,11 +58,24 @@ class Game {
 
     private initEvents() : void {
         document.addEventListener("keydown", (event : KeyboardEvent) : void => {
+            if (!(document.activeElement === Game.canvas)) return;
             Game.keyMap.set(event.key, true);
         })
 
         document.addEventListener("keyup", (event : KeyboardEvent) : void => {
             Game.keyMap.delete(event.key);
+        })
+    }
+
+    public spawnObstacle() : void {
+        const min = new THREE.Vector3().setComponent(0, Player.Player.borderMin.x);
+        const max = new THREE.Vector3().setComponent(0, Player.Player.borderMax.x);
+        const lerped = min.lerp(max, Math.random());
+
+        Obstacle.Obstacle.obstacles.push(new Obstacle.Obstacle(lerped.x));
+        
+        Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle, index : number) => {
+            this.scene.add(value.getModel());
         })
     }
 
@@ -68,8 +90,23 @@ class Game {
             }
         }
 
+        Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle) => {
+            value.update(dt);
+            value.getMesh().userData.inView = false;
+        })
+
         this.renderer.render(this.scene, this.camera);
+
+        Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle, index : number) => {
+            if (!value.getMesh().userData.inView) {
+                Obstacle.Obstacle.obstacles.splice(index, 1);
+            }
+        })
+
+        Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle) => {
+            if (value.collide(Game.player)) {
+                console.log("COLLIDED!");
+            }
+        })
     }
 }
-
-const game : Game = new Game();

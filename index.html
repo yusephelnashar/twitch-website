@@ -8,11 +8,12 @@
     </head>
     <body>
         <div class="input-container">
-            <input id="input-stream" spellcheck="false" autocomplete="off"/>
+            <input id="input-keyword" spellcheck="false" autocomplete="off" placeholder="KEYWORD"/>
+            <input id="input-stream" spellcheck="false" autocomplete="off" placeholder="STREAMER"/>
             <button id="connect-button">CONFIRM</button>
         </div>
         <div class="game-container">
-            <canvas id="game-canvas"></canvas>
+            <canvas id="game-canvas" tabindex="0"></canvas>
         </div>
         <script type="module" src="/src/twitch.ts"></script>
         <script type="module" src="/src/games/game.ts"></script>
@@ -62,16 +63,32 @@
             uniform vec2 resolution;
             uniform float time;
             uniform vec3 playerPosition;
+            uniform vec3 borderMin;
+            uniform vec3 borderMax;
 
             varying vec3 vWorldPosition;
             varying float nPyRatio;
 
+            const float PI = 3.14159;
+
             void main() {
                 float dist = distance(vWorldPosition, playerPosition);
+
+                float borderMinDistX = distance(vWorldPosition.x, borderMin.x - 5.0);
+                float borderMaxDistX = distance(vWorldPosition.x, borderMax.x + 5.0);
+                float borderMinDistZ = distance(vWorldPosition.z, borderMin.z - 5.0);
 
                 gl_FragColor = vec4(0.0, 0.0, clamp(1.0 * nPyRatio, 0.9, 1.0), 1.0);
 
                 if (dist <= 7.5) {
+                    gl_FragColor = vec4(clamp(1.0 * nPyRatio, 0.25, 1.0), 0.75, 1.0, 1.0);
+                }
+
+                if (borderMinDistX <= 0.5 && vWorldPosition.z >= borderMin.z - 5.5) {
+                    gl_FragColor = vec4(clamp(1.0 * nPyRatio, 0.25, 1.0), 0.75, 1.0, 1.0);
+                } else if (borderMaxDistX <= 0.5 && vWorldPosition.z >= borderMin.z - 5.5) {
+                    gl_FragColor = vec4(clamp(1.0 * nPyRatio, 0.25, 1.0), 0.75, 1.0, 1.0);
+                } else if (borderMinDistZ <= 0.5 && vWorldPosition.x >= borderMin.x - 5.0 && vWorldPosition.x <= borderMax.x + 5.0) {
                     gl_FragColor = vec4(clamp(1.0 * nPyRatio, 0.25, 1.0), 0.75, 1.0, 1.0);
                 }
             }
