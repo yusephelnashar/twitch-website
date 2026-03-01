@@ -1,3 +1,7 @@
+body {
+    background: linear-gradient(to right, #800980, #4d054d);
+}
+
 .input-container {
     display: flex;
     justify-content: center;
@@ -15,7 +19,7 @@
     background-color: hsl(280, 90%, 20%);
     border: 2.5px solid hsl(300, 90%, 10%);
     border-radius: 5px;
-    font: 1.2rem "Arial", sans-serf;
+    font: 1.2rem "Arial", sans-serif;
     text-shadow: 0px 2px 3px black;
     font-weight: bold;
     color: #FFFFFF;
@@ -23,16 +27,36 @@
     user-select: none;
 }
 
-#input-keyword {
-    width: 150px;
-}
-
-#game-canvas {
-    width: 750px;
+.game-container * {
     height: 500px;
     border: 5px solid hsl(300, 90%, 10%);
     border-radius: 15px;
     outline: none;
+}
+
+#game-canvas {
+    width: 750px;
+}
+
+#records {
+    box-sizing: border-box;
+    background-color: hsl(280, 90%, 30%);
+    padding: 20px;
+    box-shadow: -10px 10px 8px black;
+    font: 2rem "Arial", sans-serif;
+    text-shadow: 0px 2px 3px black;
+    font-weight: bold;
+    color: #ffffffda;
+    width: 150px;
+    text-align: center;
+    overflow-wrap: break-word;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    user-select: none;
+}
+
+#input-keyword {
+    width: 150px;
 }
 
 #connect-button {
@@ -46,6 +70,16 @@
     background-color: hsl(300, 80%, 10%);
     color: #DDDDDD;
     transform: translateY(-2.5px);
+}
+
+.invalid-input-animate {
+    animation-name: invalid-input;
+    animation-duration: 250ms;
+}
+
+.valid-input-animate {
+    animation-name: valid-input;
+    animation-duration: 250ms;
 }
 
 .click-animate {
@@ -75,5 +109,15 @@
 
 @keyframes keyword-set {
     50% { background-color: hsl(280, 10%, 5%); }
+    100% { background-color: hsl(280, 90%, 20%); }
+}
+
+@keyframes invalid-input {
+    50% { background-color: hsl(0, 75%, 35%); }
+    100% { background-color: hsl(280, 90%, 20%); }
+}
+
+@keyframes valid-input {
+    50% { background-color: hsl(100, 75%, 45%); }
     100% { background-color: hsl(280, 90%, 20%); }
 }

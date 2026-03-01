@@ -1,21 +1,23 @@
 import * as tmi from "tmi.js";
 import {Game} from "./games/game";
 
-class Twitch {
+export class Twitch {
     private client : tmi.Client | null = null;
     private inputStream : HTMLInputElement;
     private inputKeyword : HTMLInputElement;
     private connectButton : HTMLButtonElement;
     private connectButtonDebounce : number = Date.now();
     private keywordDebounce : number = Date.now();
+    private static records : HTMLDivElement;
     private static prevStreamerName : string | null = null;
 
-    constructor(game : Game) {
+    constructor() {
         this.inputStream = document.getElementById("input-stream") as HTMLInputElement;
         this.inputKeyword = document.getElementById("input-keyword") as HTMLInputElement;
         this.connectButton = document.getElementById("connect-button") as HTMLButtonElement;
+        Twitch.records = document.getElementById("records") as HTMLDivElement;
 
-        this.initEventListeners(game);
+        this.initEventListeners();
     }
 
     private initEventListeners() : void {
@@ -50,18 +52,21 @@ class Twitch {
 
         // Change later on to UI
         if (!streamerName) {
-            alert("Enter a streamer name!");
+            this.inputStream.classList.add("invalid-input-animate");
+
+            setTimeout(() => {
+                this.inputStream.classList.remove("invalid-input-animate");
+            }, 250)
+
             return;
         }
 
         if (streamerName == Twitch.prevStreamerName) {
-            alert("Already connected to streamer!");
             return;
         }
 
         if (this.client) {
             await this.client.disconnect();
-            console.log("Disconnected!");
         }
 
         this.client = new tmi.Client({
@@ -78,13 +83,26 @@ class Twitch {
 
         try {
             await this.client.connect();
+
             Twitch.prevStreamerName = streamerName;
-            console.log("Connected!");
+            this.inputStream.classList.add("valid-input-animate");
+
+            setTimeout(() => {
+                this.inputStream.classList.remove("valid-input-animate");
+            }, 250)
         } catch (error) {
-            console.error("Could not connect to Twitch: ", error);
+            this.inputStream.classList.add("invalid-input-animate");
+            
+            setTimeout(() => {
+                this.inputStream.classList.remove("invalid-input-animate");
+            }, 250)
         }
+    }
+
+    public static addRecord(content : string) : void {
+        Twitch.records.textContent += content;
     }
 }
 
 const game : Game = new Game();
-new Twitch(game);
+new Twitch();

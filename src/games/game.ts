@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as Player from "./player"
 import * as Platform from "./platform"
 import * as Obstacle from "./obstacle";
+import * as Twitch from "../twitch";
 
 const loader : THREE.TextureLoader = new THREE.TextureLoader();
 const playerTextureUrl = new URL("./images/player.png", import.meta.url).href;
@@ -20,6 +21,9 @@ export class Game {
     private camera : THREE.PerspectiveCamera;
     private renderer : THREE.WebGLRenderer;
     private clock : THREE.Clock = new THREE.Clock();
+
+    private surviveTime : number = Date.now();
+    private deathDebounce : number = Date.now();
 
     constructor() {
         Game.canvas.addEventListener("focus", () => {
@@ -104,8 +108,11 @@ export class Game {
         })
 
         Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle) => {
-            if (value.collide(Game.player)) {
-                console.log("COLLIDED!");
+            if (value.collide(Game.player) && (Date.now() - this.deathDebounce >= 2500)) {
+                let outputTime = Math.round((Date.now() - this.surviveTime - 2500) / 1000);
+                Twitch.Twitch.addRecord(`${outputTime}\n`);
+                this.surviveTime = Date.now();
+                this.deathDebounce = Date.now();
             }
         })
     }
