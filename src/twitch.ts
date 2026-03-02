@@ -8,14 +8,12 @@ export class Twitch {
     private connectButton : HTMLButtonElement;
     private connectButtonDebounce : number = Date.now();
     private keywordDebounce : number = Date.now();
-    private static records : HTMLDivElement;
     private static prevStreamerName : string | null = null;
 
     constructor() {
         this.inputStream = document.getElementById("input-stream") as HTMLInputElement;
         this.inputKeyword = document.getElementById("input-keyword") as HTMLInputElement;
         this.connectButton = document.getElementById("connect-button") as HTMLButtonElement;
-        Twitch.records = document.getElementById("records") as HTMLDivElement;
 
         this.initEventListeners();
     }
@@ -97,10 +95,6 @@ export class Twitch {
                 this.inputStream.classList.remove("invalid-input-animate");
             }, 250)
         }
-    }
-
-    public static addRecord(content : string) : void {
-        Twitch.records.textContent += content;
     }
 }
 

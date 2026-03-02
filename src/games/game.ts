@@ -22,9 +22,6 @@ export class Game {
     private renderer : THREE.WebGLRenderer;
     private clock : THREE.Clock = new THREE.Clock();
 
-    private surviveTime : number = Date.now();
-    private deathDebounce : number = Date.now();
-
     constructor() {
         Game.canvas.addEventListener("focus", () => {
             Game.canvas.classList.add("focus-animate");
@@ -108,11 +105,8 @@ export class Game {
         })
 
         Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle) => {
-            if (value.collide(Game.player) && (Date.now() - this.deathDebounce >= 2500)) {
-                let outputTime = Math.round((Date.now() - this.surviveTime - 2500) / 1000);
-                Twitch.Twitch.addRecord(`${outputTime}\n`);
-                this.surviveTime = Date.now();
-                this.deathDebounce = Date.now();
+            if (value.collide(Game.player)) {
+                console.log("COLLIDED!");
             }
         })
     }

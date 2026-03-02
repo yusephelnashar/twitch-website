@@ -27,30 +27,12 @@ body {
     user-select: none;
 }
 
-.game-container * {
+#game-canvas {
+    width: 750px;
     height: 500px;
     border: 5px solid hsl(300, 90%, 10%);
     border-radius: 15px;
     outline: none;
-}
-
-#game-canvas {
-    width: 750px;
-}
-
-#records {
-    box-sizing: border-box;
-    background-color: hsl(280, 90%, 30%);
-    padding: 20px;
-    box-shadow: -10px 10px 8px black;
-    font: 2rem "Arial", sans-serif;
-    text-shadow: 0px 2px 3px black;
-    font-weight: bold;
-    color: #ffffffda;
-    width: 75px;
-    overflow: scroll;
-    scrollbar-width: none;
-    user-select: none;
 }
 
 #input-keyword {
