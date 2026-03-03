@@ -9,6 +9,7 @@ export class Twitch {
     private connectButtonDebounce : number = Date.now();
     private keywordDebounce : number = Date.now();
     private static prevStreamerName : string | null = null;
+    private static timeContainer : HTMLDivElement = document.getElementsByClassName("time-container").item(0) as HTMLDivElement;
 
     constructor() {
         this.inputStream = document.getElementById("input-stream") as HTMLInputElement;
@@ -19,7 +20,7 @@ export class Twitch {
     }
 
     private initEventListeners() : void {
-        this.connectButton.addEventListener("click", () => this.handleConnect(game));
+        this.connectButton.addEventListener("click", () => this.handleConnect());
         this.inputKeyword.addEventListener("input", () => {
             this.keywordDebounce = Date.now();
 
@@ -36,7 +37,17 @@ export class Twitch {
         })
     }
 
-    private async handleConnect(game : Game) : Promise<void> {
+    public static displayTime(time : number) : void {
+        Twitch.timeContainer.innerHTML = `Time: ${time} seconds.`;
+        Twitch.timeContainer.classList.add("time-display");
+
+        setTimeout(() => {
+            Twitch.timeContainer.classList.remove("time-display");
+            game.resetDebounce();
+        }, 5000)
+    }
+
+    private async handleConnect() : Promise<void> {
         if ((Date.now() - this.connectButtonDebounce) < 300) return;
 
         this.connectButtonDebounce = Date.now();

@@ -2,17 +2,55 @@ body {
     background: linear-gradient(to right, #800980, #4d054d);
 }
 
+body *:not(div):not(h1) {
+    box-shadow: -15px 10px 15px black;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+h1 {
+    background: linear-gradient(to left, #1c0357, #260477);
+    font: 2rem "Arial", sans-serif;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    user-select: none;
+}
+
 .input-container {
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding-bottom: 2.5vh;
+    padding-bottom: 3.5vh;
 }
 
 .game-container {
     display: flex;
     justify-content: center;
     gap: 20px;
+    padding-bottom: 2.5vh;
+}
+
+.time-container {
+    position: absolute;
+    background-color: hsl(280, 90%, 40%);
+    border: 2.5px solid hsl(300, 90%, 10%);
+    border-radius: 5px;
+    font: 2rem "Arial", sans-serif;
+    text-shadow: 0px 2px 3px black;
+    font-weight: bold;
+    color: #FFFFFF;
+    padding: 15px;
+    box-sizing: border-box;
+    top: -100%;
+    left: 50%;
+    transform: translate(-50%);
+    user-select: none;
 }
 
 .input-container * {
@@ -77,6 +115,11 @@ body {
     animation-duration: 1000ms;
 }
 
+.time-display {
+    animation-name: time-display;
+    animation-duration: 5s;
+}
+
 @keyframes button-press {
     50% { transform: translateY(5px); }
     100% { transform: translateY(-2.5px); }
@@ -100,4 +143,10 @@ body {
 @keyframes valid-input {
     50% { background-color: hsl(100, 75%, 45%); }
     100% { background-color: hsl(280, 90%, 20%); }
+}
+
+@keyframes time-display {
+    25% { top: 50% }
+    75% { top: 50% }
+    100% { top: -25% }
 }

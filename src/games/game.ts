@@ -2,7 +2,7 @@ import * as THREE from "three";
 import * as Player from "./player"
 import * as Platform from "./platform"
 import * as Obstacle from "./obstacle";
-import * as Twitch from "../twitch";
+import { Twitch } from "../twitch";
 
 const loader : THREE.TextureLoader = new THREE.TextureLoader();
 const playerTextureUrl = new URL("./images/player.png", import.meta.url).href;
@@ -21,6 +21,9 @@ export class Game {
     private camera : THREE.PerspectiveCamera;
     private renderer : THREE.WebGLRenderer;
     private clock : THREE.Clock = new THREE.Clock();
+
+    private survivalTime : number = Date.now();
+    private invisDebouce : boolean = false;
 
     constructor() {
         Game.canvas.addEventListener("focus", () => {
@@ -80,6 +83,10 @@ export class Game {
         })
     }
 
+    public resetDebounce() {
+        this.invisDebouce = false;
+    }
+
     public animate = () : void => {
         const dt = this.clock.getDelta() / (1 / 60);
         Game.player.update(Game.keyMap, dt);
@@ -105,8 +112,11 @@ export class Game {
         })
 
         Obstacle.Obstacle.obstacles.forEach((value : Obstacle.Obstacle) => {
-            if (value.collide(Game.player)) {
-                console.log("COLLIDED!");
+            if (value.collide(Game.player) && !this.invisDebouce) {
+                this.invisDebouce = true;
+                let time = Math.round((Date.now() - this.survivalTime) / 1000) - 5;
+                Twitch.displayTime(time);
+                this.survivalTime = Date.now();
             }
         })
     }

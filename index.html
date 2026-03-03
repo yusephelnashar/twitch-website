@@ -7,6 +7,9 @@
         <title>twitch-website</title>
     </head>
     <body>
+        <div class="info-container">
+            <h1>DEMO, Not meant to be a practical application.</h1>
+        </div>
         <div class="input-container">
             <input id="input-keyword" spellcheck="false" autocomplete="off" placeholder="KEYWORD"/>
             <input id="input-stream" spellcheck="false" autocomplete="off" placeholder="STREAMER"/>
@@ -15,6 +18,7 @@
         <div class="game-container">
             <canvas id="game-canvas" tabindex="0"></canvas>
         </div>
+        <div class="time-container"></div>
         <script type="module" src="/src/twitch.ts"></script>
         <script type="module" src="/src/games/game.ts"></script>
 
